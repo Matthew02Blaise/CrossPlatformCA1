@@ -4,19 +4,27 @@ using UnityEngine;
 
 public class RepeatBackground : MonoBehaviour
 {
+    [SerializeField] private float scrollSpeed = 2f;
+
     private Vector3 startPos;
     private float repeatWidth;
 
-    // Start is called before the first frame update
-    void Start()
+    private SpriteRenderer _sr;
+
+    private void Start()
     {
         startPos = transform.position;
-        repeatWidth = GetComponent<BoxCollider2D>().size.x / 2;
+        _sr = GetComponent<SpriteRenderer>();
+
+        repeatWidth = _sr.bounds.size.x;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        //Move background left
+        transform.Translate(Vector3.left * scrollSpeed * Time.deltaTime);
+
+        //Reset when off screen
         if (transform.position.x < startPos.x - repeatWidth)
         {
             transform.position = startPos;
