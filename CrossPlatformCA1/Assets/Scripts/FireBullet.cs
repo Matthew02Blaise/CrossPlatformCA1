@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class FireBullet : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public GameObject bulletPrefab;
+    public Transform firePoint;
 
-    // Update is called once per frame
-    void Update()
+    public void Shoot()
     {
-        
+        Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
     }
 }
