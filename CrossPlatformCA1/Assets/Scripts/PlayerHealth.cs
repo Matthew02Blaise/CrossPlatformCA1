@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
-public class EnemyHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour
 {
     public int health = 1;
-    public float speed = 2f;
 
     public void TakeDamage(int damage)
     {
@@ -22,15 +20,5 @@ public class EnemyHealth : MonoBehaviour
     {
         Destroy(gameObject);
         //score++;
-    }
-
-    void Update()
-    {
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
-    }
-
-    void OnBecameInvisible()
-    {
-        Destroy(gameObject);
     }
 }

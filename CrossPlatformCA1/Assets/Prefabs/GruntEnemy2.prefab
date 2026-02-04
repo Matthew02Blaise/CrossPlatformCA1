@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 1
-  speed: 8
+  speed: 4
 --- !u!50 &622899628813535712
 Rigidbody2D:
   serializedVersion: 4

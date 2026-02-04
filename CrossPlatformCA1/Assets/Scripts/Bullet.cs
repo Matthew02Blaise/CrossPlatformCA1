@@ -23,6 +23,12 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+        //Destroy(player);
+    }
+
     void OnBecameInvisible()
     {
         Destroy(gameObject);
