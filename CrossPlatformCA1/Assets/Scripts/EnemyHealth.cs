@@ -5,9 +5,6 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class EnemyHealth : MonoBehaviour
 {
-    [Header("Movement")]
-    public float speed = 8f;
-
     [Header("Health")]
     public int health = 1;
 

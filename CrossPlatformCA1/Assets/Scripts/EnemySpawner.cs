@@ -25,6 +25,9 @@ public class EnemySpawner : MonoBehaviour
 
     private int aliveCount = 0;
 
+    private List<GameObject> activeEnemies = new List<GameObject>();
+    public bool IsBossActive { get; private set; }
+
     void Start()
     {
         InvokeRepeating(nameof(SpawnEnemy), startDelay, spawnInterval);
@@ -42,12 +45,26 @@ public class EnemySpawner : MonoBehaviour
 
         GameObject enemy = Instantiate(prefab, spawnPos, prefab.transform.rotation);
 
+        activeEnemies.Add(enemy);
         aliveCount++;
         AttachAliveHook(enemy);
     }
 
     public void SpawnBoss(int bossIndex)
     {
+        // Stop regular enemy spawning
+        CancelInvoke(nameof(SpawnEnemy));
+
+        // Despawn all existing enemies
+        foreach (GameObject enemy in activeEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+        activeEnemies.Clear();
+
+        IsBossActive = true;
+
         if (bossPrefabs == null || bossPrefabs.Length == 0) return;
         if (bossIndex < 0 || bossIndex >= bossPrefabs.Length) return;
 
@@ -59,6 +76,9 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
 
         GameObject boss = Instantiate(prefab, spawnPos, prefab.transform.rotation);
+
+        BossDeathHook hook = boss.AddComponent<BossDeathHook>();
+        hook.Init(this);
 
         if (bossesCountTowardsMaxAlive)
         {
@@ -78,6 +98,12 @@ public class EnemySpawner : MonoBehaviour
     {
         aliveCount = Mathf.Max(0, aliveCount - 1);
     }
+
+    public void NotifyBossDefeated()
+    {
+        IsBossActive = false;
+        InvokeRepeating(nameof(SpawnEnemy), startDelay, spawnInterval);
+    }
 }
 
 // Helper component: calls back to spawner when this object is destroyed
@@ -94,5 +120,21 @@ public class AliveCounterHook : MonoBehaviour
     {
         if (spawner != null)
             spawner.NotifyEnemyDestroyed();
+    }
+}
+
+public class BossDeathHook : MonoBehaviour
+{
+    private EnemySpawner spawner;
+
+    public void Init(EnemySpawner s)
+    {
+        spawner = s;
+    }
+
+    private void OnDestroy()
+    {
+        if (spawner != null)
+            spawner.NotifyBossDefeated();
     }
 }

@@ -1361,11 +1361,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefabs:
-  - {fileID: 4774111005453591471, guid: c1f97a7db99006d4fac2899388e38a15, type: 3}
+  - {fileID: 7153505027546730835, guid: 6ed2e47c0a89c8146a182b98ccb93772, type: 3}
   - {fileID: 1432696547300675566, guid: 618d1d696f176d24584ac85b2babf979, type: 3}
   - {fileID: 6901150187645578380, guid: 9d21d28e68d84d54787d5300eef2f646, type: 3}
   - {fileID: 6332455241931460375, guid: 6f7524cf6f3b0f849b4b43cdfeb624d2, type: 3}
-  - {fileID: 7351207786994506171, guid: 5633f3d46fc0e8d4daabbed9d356f318, type: 3}
+  - {fileID: 7239656095417226688, guid: 4b173f2d0cefa304a9fe47d5f010d4a0, type: 3}
   - {fileID: 3242345884251373192, guid: 61c505182deb405479de3f6ac953a768, type: 3}
   bossPrefabs:
   - {fileID: 1622660916926903383, guid: 45734ccb608f3f54892c9218415f2413, type: 3}

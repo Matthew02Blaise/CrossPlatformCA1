@@ -21,11 +21,13 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (enemySpawner != null && enemySpawner.IsBossActive)
+            return;
+
         timeRemaining -= Time.deltaTime;
 
         float elapsed = gameDurationSeconds - timeRemaining;
 
-        // Boss each minute (60, 120, 180 elapsed)
         if (!boss1Spawned && elapsed >= 60f)
         {
             enemySpawner.SpawnBoss(0);
@@ -42,14 +44,16 @@ public class GameManager : MonoBehaviour
         {
             enemySpawner.SpawnBoss(2);
             boss3Spawned = true;
-
-            // End the game here (win condition). Replace with your own UI.
-            EndGame();
         }
 
         if (timeRemaining <= 0f && !boss3Spawned)
         {
-            // Safety fallback
+            EndGame();
+        }
+
+        // 
+        if (boss3Spawned && enemySpawner != null && !enemySpawner.IsBossActive)
+        {
             EndGame();
         }
     }
