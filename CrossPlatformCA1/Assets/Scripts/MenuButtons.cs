@@ -25,7 +25,7 @@ public class MenuButtons : MonoBehaviour
     void StartGameButton()
     {
         Debug.Log(startButton.gameObject.name + " was clicked");
-        gameManager.StartGame();
+        //gameManager.StartGame();
 
     }
 }

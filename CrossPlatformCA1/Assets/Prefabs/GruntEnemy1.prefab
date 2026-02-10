@@ -13,6 +13,9 @@ GameObject:
   - component: {fileID: 3091491328043025013}
   - component: {fileID: 1921904363242503536}
   - component: {fileID: 8959003911026754626}
+  - component: {fileID: 8800621251623148551}
+  - component: {fileID: 2012540128028595963}
+  - component: {fileID: -3801573588485719261}
   m_Layer: 0
   m_Name: GruntEnemy1
   m_TagString: Untagged
@@ -100,7 +103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 1
-  speed: 4
 --- !u!50 &1921904363242503536
 Rigidbody2D:
   serializedVersion: 4
@@ -157,7 +159,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -173,3 +175,44 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4.45, y: 4.79}
   m_EdgeRadius: 0
+--- !u!114 &8800621251623148551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6901150187645578380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8b08208b35e814db5bc3ee96550c21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
+--- !u!114 &2012540128028595963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6901150187645578380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71bfe1fb90fb58840892682f3b586867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-3801573588485719261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6901150187645578380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ff987f7406fa514eb81cbc623b63b65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyBulletPrefab: {fileID: 2521232584565541579, guid: 5d30d09a90544d941b5330e7fc752b38, type: 3}
+  firePoint: {fileID: 0}
+  fireRate: 1
+  randomJitter: 0.2

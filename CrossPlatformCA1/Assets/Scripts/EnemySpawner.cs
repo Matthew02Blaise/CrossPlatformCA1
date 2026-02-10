@@ -4,40 +4,95 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("Enemy Prefabs (6 types)")]
     public GameObject[] enemyPrefabs = new GameObject[6];
 
+    [Header("Bosses (Minute 1, 2, 3)")]
+    public GameObject[] bossPrefabs = new GameObject[3];
+
+    [Header("Spawn Timing")]
     public float spawnInterval = 1.25f;
     public float startDelay = 1f;
 
+    [Header("Spawn Area")]
     public float spawnX = 10f;
     public float minY = -4f;
     public float maxY = 4f;
 
-    public int health = 1;
+    [Header("Max Alive")]
     public int maxAlive = 8;
+    public bool bossesCountTowardsMaxAlive = false;
 
-    private void Start()
+    private int aliveCount = 0;
+
+    void Start()
     {
         InvokeRepeating(nameof(SpawnEnemy), startDelay, spawnInterval);
     }
 
     void SpawnEnemy()
     {
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
-            return;
+        if (aliveCount >= maxAlive) return;
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
 
-        int index = GetRandomIndex();
-        if (enemyPrefabs[index] == null)
-            return;
+        GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        if (prefab == null) return;
 
-        float y = Random.Range(minY, maxY);
-        Vector3 spawnPos = new Vector3(spawnX, y, 0f);
+        Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
 
-        Instantiate(enemyPrefabs[index], spawnPos, Quaternion.identity);
+        GameObject enemy = Instantiate(prefab, spawnPos, prefab.transform.rotation);
+
+        aliveCount++;
+        AttachAliveHook(enemy);
     }
 
-    int GetRandomIndex()
+    public void SpawnBoss(int bossIndex)
     {
-        return Random.Range(0, enemyPrefabs.Length);
+        if (bossPrefabs == null || bossPrefabs.Length == 0) return;
+        if (bossIndex < 0 || bossIndex >= bossPrefabs.Length) return;
+
+        if (bossesCountTowardsMaxAlive && aliveCount >= maxAlive) return;
+
+        GameObject prefab = bossPrefabs[bossIndex];
+        if (prefab == null) return;
+
+        Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
+
+        GameObject boss = Instantiate(prefab, spawnPos, prefab.transform.rotation);
+
+        if (bossesCountTowardsMaxAlive)
+        {
+            aliveCount++;
+            AttachAliveHook(boss);
+        }
+    }
+
+    private void AttachAliveHook(GameObject obj)
+    {
+        // Add a tiny helper that notifies this spawner when the enemy is destroyed
+        AliveCounterHook hook = obj.AddComponent<AliveCounterHook>();
+        hook.Init(this);
+    }
+
+    public void NotifyEnemyDestroyed()
+    {
+        aliveCount = Mathf.Max(0, aliveCount - 1);
+    }
+}
+
+// Helper component: calls back to spawner when this object is destroyed
+public class AliveCounterHook : MonoBehaviour
+{
+    private EnemySpawner spawner;
+
+    public void Init(EnemySpawner s)
+    {
+        spawner = s;
+    }
+
+    private void OnDestroy()
+    {
+        if (spawner != null)
+            spawner.NotifyEnemyDestroyed();
     }
 }

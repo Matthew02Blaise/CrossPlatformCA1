@@ -4,21 +4,47 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int health = 1;
+    [Header("Health")]
+    public int maxHealth = 3;
+    public int health = 3;
+
+    [Header("Shield")]
+    public int shieldHits = 0; // blocks this many hits
+
+    private bool isDead;
 
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        if (isDead) return;
 
-        if (health <= 0)
+        // Shield blocks first
+        if (shieldHits > 0)
         {
-            Die();
+            shieldHits--;
+            return;
         }
+
+        health -= damage;
+        if (health <= 0)
+            Die();
     }
 
-    void Die()
+    public void Heal(int amount)
     {
+        if (isDead) return;
+        health = Mathf.Min(maxHealth, health + amount);
+    }
+
+    public void AddShield(int hits)
+    {
+        if (isDead) return;
+        shieldHits += hits;
+    }
+
+    public void Die()
+    {
+        if (isDead) return;
+        isDead = true;
         Destroy(gameObject);
-        //score++;
     }
 }

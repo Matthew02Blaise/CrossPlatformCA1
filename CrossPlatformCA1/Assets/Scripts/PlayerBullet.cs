@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class PlayerBullet : MonoBehaviour
 {
     public float speed = 10f;
     public int damage = 1;
@@ -15,18 +15,11 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         EnemyHealth enemy = other.GetComponent<EnemyHealth>();
-
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
             Destroy(gameObject);
         }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        PlayerHealth player = other.GetComponent<PlayerHealth>();
-        //Destroy(player);
     }
 
     void OnBecameInvisible()
