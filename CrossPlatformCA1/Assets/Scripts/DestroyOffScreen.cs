@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+//Code used on enemies and bullets to destroy them when they go off screen
 public class DestroyOffScreen : MonoBehaviour
 {
     void OnBecameInvisible()

@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.UI;
 
+// Main game manager script that handles the game, including timing, boss spawning, and game end conditions
 public class GameManager : MonoBehaviour
 {
     public EnemySpawner enemySpawner;
