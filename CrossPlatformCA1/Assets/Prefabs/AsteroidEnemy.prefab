@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4888468781171923606}
   - component: {fileID: -282852849683151967}
   - component: {fileID: -7526014352759523792}
+  - component: {fileID: 6815254094091113421}
   m_Layer: 0
   m_Name: AsteroidEnemy
   m_TagString: Untagged
@@ -101,7 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af232f53d3a105419da2369106873c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
   health: 3
 --- !u!50 &1424321649509318161
 Rigidbody2D:
@@ -189,6 +189,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
 --- !u!114 &-7526014352759523792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1432696547300675566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71bfe1fb90fb58840892682f3b586867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6815254094091113421
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

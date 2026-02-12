@@ -13,6 +13,8 @@ public class PlayerHealth : MonoBehaviour
 
     private bool isDead;
 
+    public GameObject shieldText;
+
     public void TakeDamage(int damage)
     {
         if (isDead) return;
@@ -39,6 +41,10 @@ public class PlayerHealth : MonoBehaviour
     {
         if (isDead) return;
         shieldHits += hits;
+
+
+        if (shieldText != null)
+            shieldText.SetActive(true);
     }
 
     public void Die()

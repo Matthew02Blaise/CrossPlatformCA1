@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1995460823250826944}
   - component: {fileID: 9113545393475696520}
   - component: {fileID: 9172959732416293785}
+  - component: {fileID: -568122746030166290}
+  - component: {fileID: 2981765778360978291}
   m_Layer: 0
   m_Name: Mine 1
   m_TagString: Untagged
@@ -100,7 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af232f53d3a105419da2369106873c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 8
   health: 1
 --- !u!114 &1995460823250826944
 MonoBehaviour:
@@ -187,3 +188,28 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-568122746030166290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7153505027546730835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71bfe1fb90fb58840892682f3b586867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2981765778360978291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7153505027546730835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79348e817fb9da1409c2c05d1b221b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
