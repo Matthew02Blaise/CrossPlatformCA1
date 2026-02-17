@@ -16,12 +16,6 @@ public class MenuButtons : MonoBehaviour
         startButton.onClick.AddListener(StartGameButton);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     void StartGameButton()
     {
         Debug.Log(startButton.gameObject.name + " was clicked");

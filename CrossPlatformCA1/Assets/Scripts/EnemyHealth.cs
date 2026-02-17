@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class EnemyHealth : MonoBehaviour
 {
@@ -17,7 +18,6 @@ public class EnemyHealth : MonoBehaviour
         if (player != null)
         {
             player.TakeDamage(1);
-            //Destroy(gameObject);
         }
     }
 
@@ -31,6 +31,8 @@ public class EnemyHealth : MonoBehaviour
         if (health <= 0)
         {
             Destroy(gameObject);
+            //play sound on enemy death
+            SoundManager.Instance.Play(SoundManager.Instance.enemyDeath);
         }
     }
 }

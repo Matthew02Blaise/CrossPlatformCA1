@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 // Code for the enemy's shooting behavior, which spawns bullets at a set rate with some random jitter
 public class EnemyShoot : MonoBehaviour
@@ -38,6 +39,7 @@ public class EnemyShoot : MonoBehaviour
         // Check if the bullet prefab and fire point are assigned before trying to instantiate
         if (enemyBulletPrefab == null || firePoint == null) return;
         Instantiate(enemyBulletPrefab, firePoint.position, Quaternion.identity);
+        SoundManager.Instance.Play(SoundManager.Instance.enemyShoot, 0.2f);
     }
 
     // Method to calculate the next shot time based on the fire rate, with a safeguard against zero or negative fire rates

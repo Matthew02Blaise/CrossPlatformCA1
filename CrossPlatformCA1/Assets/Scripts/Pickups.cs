@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Pickups : MonoBehaviour
 {
+    // list that determines what the pickup actually does
     public enum PickupType
     {
         Shield,
@@ -13,25 +14,28 @@ public class Pickups : MonoBehaviour
     [Header("Type")]
     public PickupType type = PickupType.Shield;
 
+    // values applied to the player
     [Header("Values")]
     public int shieldHitsToGive = 1;
     public int healAmount = 1;
 
+    // movement speed
     [Header("Movement")]
     public float speed = 2.5f;
 
     void Update()
     {
-        // Move left constantly
+        // constantly moves left like other space objects
         transform.Translate(Vector2.left * speed * Time.deltaTime, Space.World);
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // only react if the player touches it
         PlayerHealth player = other.GetComponent<PlayerHealth>();
         if (player == null) return;
 
-        // Apply effect based on type
+        // apply the correct effect
         switch (type)
         {
             case PickupType.Shield:
@@ -43,6 +47,7 @@ public class Pickups : MonoBehaviour
                 break;
         }
 
+        // remove pickup after collecting
         Destroy(gameObject);
     }
 }

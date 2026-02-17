@@ -2,106 +2,119 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Main spawner script that handles spawning regular enemies and bosses,
-// with options for spawn intervals, max alive enemies, and boss behavior
+// Handles spawning normal enemies, bosses, stage progression and score hooks
 public class EnemySpawner : MonoBehaviour
 {
-    //Varivales for enemy and boss prefabs, spawn intervals, spawn area and max alive enemies, all can be changed in the inspector
-    [Header("Enemy Prefabs")]
+    // Enemy and boss prefabs assigned in inspector
     public GameObject[] enemyPrefabs = new GameObject[6];
-
-    [Header("Boss Prefabs")]
     public GameObject[] bossPrefabs = new GameObject[3];
 
-    [Header("Spawn interval")]
+    // Timing
     public float spawnInterval = 1.25f;
     public float startDelay = 1f;
 
-    [Header("Spawn Area")]
-    public float spawnX = 10f;
-    public float minY = -4f;
-    public float maxY = 4f;
+    // Spawn positions
+    public float spawnX = 25f;
+    public float bossSpawnX = 5f;
+    public float minY = -12f;
+    public float maxY = 12f;
 
-    [Header("Max Alive")]
+    // Max enemies alive at once
     public int maxAlive = 8;
     public bool bossesCountTowardsMaxAlive = false;
 
+    // Score values per enemy/boss
+    public int[] enemyScores = new int[6] { 1, 3, 1, 2, 4, 2 };
+    public int[] bossScores = new int[3] { 10, 20, 50 };
+
+    private GameManager gameManager;
     private int aliveCount = 0;
 
-    // Keep track of active enemies to despawn them when a boss spawns
+    // Track active enemies so we can wipe them when a boss spawns
     private List<GameObject> activeEnemies = new List<GameObject>();
-    // Flag to indicate if a boss is currently active, which can be used by other scripts to adjust behavior
+
+    // Lets other scripts know a boss fight is happening
     public bool IsBossActive { get; private set; }
 
-    // Start is called before the first frame update
+    // Enemy pools change after each boss
+    public GameObject[] stage1Enemies;
+    public GameObject[] stage2Enemies;
+    public GameObject[] stage3Enemies;
+    public GameObject[] stage4Enemies;
+
+    private GameObject[] currentEnemies;
+    private int currentBossIndex = -1;
+
     void Start()
     {
-        // Start the regular enemy spawning loop
+        gameManager = FindFirstObjectByType<GameManager>();
+        currentEnemies = stage1Enemies;
+
+        // continuously spawns enemies
         InvokeRepeating(nameof(SpawnEnemy), startDelay, spawnInterval);
     }
 
-    // Method to spawn a regular enemy, which checks the max alive limit and randomly selects a prefab and spawn position
     void SpawnEnemy()
     {
-        // Don't spawn regular enemies if a boss is active or if we've reached the max alive limit
+        // don't spawn if limit reached
         if (aliveCount >= maxAlive) return;
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
+        if (currentEnemies == null || currentEnemies.Length == 0) return;
 
-        // Randomly select an enemy prefab from the array
-        GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        GameObject prefab = currentEnemies[Random.Range(0, currentEnemies.Length)];
         if (prefab == null) return;
 
-        // Randomly determine a spawn position within the defined Y range, using the fixed X spawn position
         Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
-
-        // Instantiate the enemy prefab at the spawn position with its default rotation
         GameObject enemy = Instantiate(prefab, spawnPos, prefab.transform.rotation);
 
-        // Add the new enemy to the list of active enemies and increment the alive count,
-        // then attach a hook to track when it gets destroyed
+        // attach score handler so killing enemy adds score
+        int points = GetEnemyPoints(prefab);
+        var scoreHook = enemy.AddComponent<scoreUpdate>();
+        scoreHook.Init(gameManager, points);
+
         activeEnemies.Add(enemy);
         aliveCount++;
         AttachAliveHook(enemy);
     }
 
-    // Method to spawn a boss, which stops regular enemy spawning, despawns existing enemies, and instantiates the boss prefab
     public void SpawnBoss(int bossIndex)
     {
-        // Stop regular enemy spawning
+        MusicManager.Instance.PlayBoss(bossIndex);
+        currentBossIndex = bossIndex;
+
+        // stop normal spawning during boss fight
         CancelInvoke(nameof(SpawnEnemy));
 
-        // Despawn all existing enemies
+        // remove all normal enemies before boss
         foreach (GameObject enemy in activeEnemies)
         {
             if (enemy != null)
+            {
+                var hook = enemy.GetComponent<scoreUpdate>();
+                if (hook != null) hook.Suppress();
                 Destroy(enemy);
+            }
         }
-        // Clear the list of active enemies and reset the alive count since they are all destroyed
+
         activeEnemies.Clear();
-        // Set the flag to indicate a boss is now active, which can be used by other scripts to adjust behavior
         IsBossActive = true;
 
-        // Validate the boss index and prefab array before attempting to spawn the boss
-        if (bossPrefabs == null || bossPrefabs.Length == 0) return;
-        if (bossIndex < 0 || bossIndex >= bossPrefabs.Length) return;
+        if (bossPrefabs == null || bossIndex < 0 || bossIndex >= bossPrefabs.Length) return;
 
-        // If bosses count towards max alive, check the limit before spawning the boss
-        if (bossesCountTowardsMaxAlive && aliveCount >= maxAlive) return;
-
-        // Randomly determine a spawn position for the boss within the defined Y range, using the fixed X spawn position
         GameObject prefab = bossPrefabs[bossIndex];
         if (prefab == null) return;
 
-        // Instantiate the boss prefab at the spawn position with its default rotation
-        Vector3 spawnPos = new Vector3(spawnX, Random.Range(minY, maxY), 0f);
-
-        // Instantiate the boss and attach a hook to track when it gets defeated,
-        // which will allow us to resume regular enemy spawning
+        Vector3 spawnPos = new Vector3(bossSpawnX, Random.Range(minY, maxY), 0f);
         GameObject boss = Instantiate(prefab, spawnPos, prefab.transform.rotation);
-        BossDeathHook hook = boss.AddComponent<BossDeathHook>();
-        hook.Init(this);
 
-        // If bosses count towards max alive, increment the alive count and attach a hook to track when the boss is defeated
+        // score for killing boss
+        int bossPoints = (bossScores != null && bossIndex < bossScores.Length) ? bossScores[bossIndex] : 0;
+        var scoreHook = boss.AddComponent<scoreUpdate>();
+        scoreHook.Init(gameManager, bossPoints);
+
+        // notify spawner when boss dies
+        BossDeathHook hook2 = boss.AddComponent<BossDeathHook>();
+        hook2.Init(this);
+
         if (bossesCountTowardsMaxAlive)
         {
             aliveCount++;
@@ -109,32 +122,44 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    // Helper method to attach a hook component to an enemy or boss GameObject,
-    // which will notify this spawner when it gets destroyed
     private void AttachAliveHook(GameObject obj)
     {
-        // Add a tiny helper that notifies this spawner when the enemy is destroyed
         AliveCounterHook hook = obj.AddComponent<AliveCounterHook>();
         hook.Init(this);
     }
 
-    // Method called by the AliveCounterHook when an enemy is destroyed,
-    // which decrements the alive count and ensures it doesn't go below zero
     public void NotifyEnemyDestroyed()
     {
         aliveCount = Mathf.Max(0, aliveCount - 1);
     }
 
-    // Method called by the BossDeathHook when a boss is defeated,
-    // which resets the boss active flag and resumes regular enemy spawning
     public void NotifyBossDefeated()
     {
         IsBossActive = false;
+
+        // change enemy pool after each boss
+        if (currentBossIndex == 0) currentEnemies = stage2Enemies;
+        else if (currentBossIndex == 1) currentEnemies = stage3Enemies;
+        else if (currentBossIndex == 2) currentEnemies = stage4Enemies;
+
+        // resume normal spawning
         InvokeRepeating(nameof(SpawnEnemy), startDelay, spawnInterval);
+
+        MusicManager.Instance.PlayNormal();
+    }
+
+    int GetEnemyPoints(GameObject prefab)
+    {
+        for (int i = 0; i < enemyPrefabs.Length; i++)
+        {
+            if (enemyPrefabs[i] == prefab)
+                return (enemyScores != null && i < enemyScores.Length) ? enemyScores[i] : 0;
+        }
+        return 0;
     }
 }
 
-// Helper component that notifies the EnemySpawner when an enemy is destroyed, allowing it to keep track of the alive count
+// attached to every spawned enemy so the spawner knows when it dies
 public class AliveCounterHook : MonoBehaviour
 {
     private EnemySpawner spawner;
@@ -151,7 +176,7 @@ public class AliveCounterHook : MonoBehaviour
     }
 }
 
-// Helper component that notifies the EnemySpawner when a boss is defeated, allowing it to resume regular enemy spawning
+// attached to bosses so the spawner can resume waves after boss death
 public class BossDeathHook : MonoBehaviour
 {
     private EnemySpawner spawner;

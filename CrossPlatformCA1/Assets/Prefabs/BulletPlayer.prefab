@@ -175,6 +175,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   damage: 1
+  bulletPrefab: {fileID: 2876184862500378577}
+  firePoint: {fileID: 0}
 --- !u!114 &315671234758466292
 MonoBehaviour:
   m_ObjectHideFlags: 0

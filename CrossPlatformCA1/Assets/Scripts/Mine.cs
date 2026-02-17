@@ -37,4 +37,17 @@ public class Mine : MonoBehaviour
             direction *= -1;
         }
     }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        // Check if the collided object has a PlayerHealth component
+        PlayerHealth player = other.GetComponent<PlayerHealth>();
+
+        // If the player component exists, damage the player
+        if (player != null)
+        {
+            player.TakeDamage(1);
+            Destroy(gameObject);
+        }
+    }
 }

@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement")]
     [SerializeField] private float speed = 5f;
     public FixedJoystick fixedJoystick;
 
-    [Header("Screen Clamp")]
-    [SerializeField] private float padding = 0.5f; // tweak so ship stays fully visible
+    // keeps the ship inside the screen
+    [SerializeField] private float padding = 0.5f;
 
+    // prevents tiny joystick drift on mobile
     [SerializeField] private float joystickDeadzone = 0.15f;
 
     private Rigidbody2D _rb;
@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+
+        // smoother movement
         _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         _rb.freezeRotation = true;
 
@@ -30,43 +32,45 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (fixedJoystick == null)
+        // keyboard controls
+        float keyboardX = Input.GetAxisRaw("Horizontal");
+        float keyboardY = Input.GetAxisRaw("Vertical");
+
+        // joystick controls (mobile)
+        float joyX = 0f;
+        float joyY = 0f;
+
+        if (fixedJoystick != null)
         {
-            _horizontalInput = 0f;
-            _verticalInput = 0f;
-            return;
+            joyX = fixedJoystick.Horizontal;
+            joyY = fixedJoystick.Vertical;
+
+            // ignore tiny finger drift
+            if (Mathf.Abs(joyX) < joystickDeadzone) joyX = 0f;
+            if (Mathf.Abs(joyY) < joystickDeadzone) joyY = 0f;
         }
 
-        _horizontalInput = fixedJoystick.Horizontal;
-        _verticalInput = fixedJoystick.Vertical;
-
-        // Deadzone to stop tiny drift from pinning you to an edge
-        if (Mathf.Abs(_horizontalInput) < joystickDeadzone) _horizontalInput = 0f;
-        if (Mathf.Abs(_verticalInput) < joystickDeadzone) _verticalInput = 0f;
+        // combine keyboard + joystick input
+        _horizontalInput = Mathf.Clamp(keyboardX + joyX, -1f, 1f);
+        _verticalInput = Mathf.Clamp(keyboardY + joyY, -1f, 1f);
     }
 
     private void FixedUpdate()
     {
-        // Read current pos
+        // current position
         Vector2 pos = _rb.position;
 
-        // Apply velocity from input
-        Vector2 vel = new Vector2(_horizontalInput * speed, _verticalInput * speed);
+        Vector2 input = new Vector2(_horizontalInput, _verticalInput);
+        Vector2 delta = input * speed * Time.fixedDeltaTime;
 
-        // Clamp position
-        float clampedX = Mathf.Clamp(pos.x, _minX, _maxX);
-        float clampedY = Mathf.Clamp(pos.y, _minY, _maxY);
+        // target position
+        Vector2 target = pos + delta;
 
-        // If we're at the left/right edge AND still trying to move further out, stop that component
-        if ((pos.x <= _minX && vel.x < 0f) || (pos.x >= _maxX && vel.x > 0f))
-            vel.x = 0f;
+        // clamp target so the ship stays on screen
+        target.x = Mathf.Clamp(target.x, _minX, _maxX);
+        target.y = Mathf.Clamp(target.y, _minY, _maxY);
 
-        // If we're at the bottom/top edge AND still trying to move further out, stop that component
-        if ((pos.y <= _minY && vel.y < 0f) || (pos.y >= _maxY && vel.y > 0f))
-            vel.y = 0f;
-
-        _rb.velocity = vel;
-        _rb.position = new Vector2(clampedX, clampedY);
+        _rb.MovePosition(target);
     }
 
     private void CacheCameraBounds()
@@ -74,12 +78,13 @@ public class PlayerController : MonoBehaviour
         Camera cam = Camera.main;
         if (cam == null)
         {
-            // Fallback: no camera found; prevents NaNs
-            _minX = -999f; _maxX = 999f; _minY = -999f; _maxY = 999f;
+            // if no camera found, just use large bounds to avoid errors
+            _minX = -999f; _maxX = 999f;
+            _minY = -999f; _maxY = 999f;
             return;
         }
 
-        // Orthographic camera bounds in world units
+        // convert camera view to world space limits
         float camHalfHeight = cam.orthographicSize;
         float camHalfWidth = camHalfHeight * cam.aspect;
 
