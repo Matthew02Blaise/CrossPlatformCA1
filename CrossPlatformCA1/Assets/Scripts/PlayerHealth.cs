@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
+using GameAnalyticsSDK;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -34,6 +35,10 @@ public class PlayerHealth : MonoBehaviour
         // shield absorbs damage first
         if (shieldHits > 0)
         {
+            //GAME ANALYTICS**** 
+            RunAnalytics.Instance?.RecordShieldBlockedHit(1);
+            RunAnalytics.Instance?.UpdateVitals(health, shieldHits);
+
             shieldHits--;
             UpdateShieldVisual();
             RefreshHUD();
@@ -45,6 +50,11 @@ public class PlayerHealth : MonoBehaviour
 
         // apply real health damage
         health -= damage;
+
+        //GAME ANALYTICS****
+        RunAnalytics.Instance?.RecordHealthDamage(damage);
+        RunAnalytics.Instance?.UpdateVitals(health, shieldHits);
+
         RefreshHUD();
 
         if (health <= 0)
@@ -82,7 +92,22 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        if (RunAnalytics.Instance != null)
+        {
+            float runTime = RunAnalytics.Instance.GetRunElapsedSeconds();
+            int deathSegment = Mathf.Clamp(Mathf.FloorToInt(runTime / 60f) + 1, 1, 3);
+
+            Debug.Log("Death runtime: " + runTime);
+            Debug.Log("Death segment: " + deathSegment);
+
+            GameAnalytics.NewDesignEvent($"run:death_segment:{deathSegment}");
+        }
+
         var deathUI = FindFirstObjectByType<DeathUI>();
+
+        //GAME ANALYTICS****
+        var gm = FindFirstObjectByType<GameManager>();
+        RunAnalytics.Instance?.EndRun(false, gm != null ? gm.Score : 0);
 
         if (deathUI != null)
             deathUI.ShowDeath();

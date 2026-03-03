@@ -19,6 +19,7 @@ public class PlayerBullet : MonoBehaviour
         EnemyHealth enemy = other.GetComponent<EnemyHealth>();
         if (enemy != null)
         {
+            RunAnalytics.Instance?.RecordShotHit(1);
             // apply damage then destroy the bullet
             enemy.TakeDamage(damage);
             Destroy(gameObject);

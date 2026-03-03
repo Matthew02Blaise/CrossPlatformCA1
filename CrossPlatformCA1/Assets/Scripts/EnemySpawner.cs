@@ -81,6 +81,9 @@ public class EnemySpawner : MonoBehaviour
         MusicManager.Instance.PlayBoss(bossIndex);
         currentBossIndex = bossIndex;
 
+        //GAME ANALYTICS****
+        RunAnalytics.Instance?.OnBossSpawn(bossIndex, gameManager != null ? gameManager.Score : 0);
+
         // stop normal spawning during boss fight
         CancelInvoke(nameof(SpawnEnemy));
 
@@ -135,6 +138,9 @@ public class EnemySpawner : MonoBehaviour
 
     public void NotifyBossDefeated()
     {
+        //GAME ANALYTICS****
+        RunAnalytics.Instance?.OnBossDefeated(currentBossIndex, gameManager != null ? gameManager.Score : 0);
+
         IsBossActive = false;
 
         // change enemy pool after each boss

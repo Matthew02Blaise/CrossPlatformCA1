@@ -12,6 +12,7 @@ public class FireBullet : MonoBehaviour
     public void Shoot()
     {
         Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        RunAnalytics.Instance?.RecordShotFired(1);
         SoundManager.Instance.Play(SoundManager.Instance.playerShoot, 0.2f);
     }
 }

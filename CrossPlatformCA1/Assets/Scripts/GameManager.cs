@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     // sets up timer and HUD at start, also starts music
     void Start()
     {
+        //GAME ANALYTICS****
+        RunAnalytics.Instance?.StartRun();
+
         timeRemaining = gameDurationSeconds;
 
         hud = FindFirstObjectByType<HUD>();
@@ -104,6 +107,9 @@ public class GameManager : MonoBehaviour
     // shows win screen and stops gameplay
     void EndGame()
     {
+        //GAME ANALYTICS****
+        RunAnalytics.Instance?.EndRun(true, Score);
+
         EndUI.ShowWin();
 
         Time.timeScale = 0f;
