@@ -6,12 +6,11 @@ public class GooglePlayManager : MonoBehaviour
 {
     void Start()
     {
-        PlayGamesClientConfiguration config = new
-        PlayGamesClientConfiguration.Builder().Build();
-        PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.Activate();
-        Social.localUser.Authenticate(success => {
-            Debug.Log(success ? "Signed in to Google Play" : "Google Play sign-in failed");
+
+        PlayGamesPlatform.Instance.Authenticate(status =>
+        {
+            Debug.Log($"Google Play sign-in result: {status}");
         });
     }
 }
