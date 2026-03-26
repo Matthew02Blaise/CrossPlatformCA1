@@ -60,4 +60,14 @@ public class PauseUI : MonoBehaviour
         // only works in build, not in the Unity editor
         Application.Quit();
     }
+
+    public void OpenAchievements()
+    {
+        GooglePlayManager.Instance?.ShowAchievementsUI();
+    }
+
+    public void OpenLeaderboard()
+    {
+        GooglePlayManager.Instance?.ShowLeaderboardUI();
+    }
 }

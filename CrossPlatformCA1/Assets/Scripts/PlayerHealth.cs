@@ -92,6 +92,9 @@ public class PlayerHealth : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
+        //record a death for achievement tracking
+        GooglePlayManager.Instance?.RecordDeath();
+
         if (RunAnalytics.Instance != null)
         {
             float runTime = RunAnalytics.Instance.GetRunElapsedSeconds();
@@ -108,6 +111,13 @@ public class PlayerHealth : MonoBehaviour
         //GAME ANALYTICS****
         var gm = FindFirstObjectByType<GameManager>();
         RunAnalytics.Instance?.EndRun(false, gm != null ? gm.Score : 0);
+
+
+        // submit score to leaderboard
+        if (gm != null)
+        {
+            GooglePlayManager.Instance?.ReportScore(gm.Score);
+        }
 
         if (deathUI != null)
             deathUI.ShowDeath();

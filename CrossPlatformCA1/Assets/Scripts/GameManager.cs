@@ -21,6 +21,10 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private EndUI EndUI;
 
+    //achievement tracking
+    private bool firstBossAwarded = false;
+    private bool secondBossAwarded = false;
+
     // sets up timer and HUD at start, also starts music
     void Start()
     {
@@ -47,6 +51,19 @@ public class GameManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Alpha3)) timeRemaining = gameDurationSeconds - 179f;
         #endif
 
+        // award achievement when boss 1 is defeated
+        if (bossStage == 1 && enemySpawner != null && !enemySpawner.IsBossActive && !firstBossAwarded)
+        {
+            firstBossAwarded = true;
+            GooglePlayManager.Instance?.RecordFirstBossDefeated();
+        }
+
+        // award achievement when boss 2 is defeated
+        if (bossStage == 2 && enemySpawner != null && !enemySpawner.IsBossActive && !secondBossAwarded)
+        {
+            secondBossAwarded = true;
+            GooglePlayManager.Instance?.RecordSecondBossDefeated();
+        }
         // pause the timer while a boss fight is active
         if (enemySpawner != null && enemySpawner.IsBossActive)
             return;
@@ -109,6 +126,10 @@ public class GameManager : MonoBehaviour
     {
         //GAME ANALYTICS****
         RunAnalytics.Instance?.EndRun(true, Score);
+
+        //leaderboard and achievement reporting
+        GooglePlayManager.Instance?.RecordGameCompleted();
+        GooglePlayManager.Instance?.ReportScore(Score);
 
         EndUI.ShowWin();
 

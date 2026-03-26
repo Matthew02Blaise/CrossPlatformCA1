@@ -27,6 +27,9 @@ public class scoreUpdate : MonoBehaviour
         if (!awardScore) return;
 
         if (gm != null && points > 0)
+        {
             gm.AddScore(points);
+            GooglePlayManager.Instance?.RecordKill();
+        }
     }
 }
