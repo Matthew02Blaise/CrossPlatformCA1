@@ -1,8 +1,0 @@
-Google link to download on playstore (wont work for liam.noon@tus.ie TUS email domain needs to be gmail so I can add to tester list):
-https://play.google.com/apps/testing/com.Matthew02Blaise.SpaceSoldier
-
-Itch For Game Analytics download:
-https://matthewor123.itch.io/space-game-apk
-
-GitHub for code for both google and game analytics:
-https://github.com/Matthew02Blaise/CrossPlatformCA1

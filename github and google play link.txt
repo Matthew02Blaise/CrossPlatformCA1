@@ -1,0 +1,5 @@
+Google link to download on playstore (wont work for liam.noon@tus.ie TUS email domain needs to be gmail so I can add to tester list):
+https://play.google.com/apps/testing/com.Matthew02Blaise.SpaceSoldier
+
+GitHub for code:
+https://github.com/Matthew02Blaise/CrossPlatformCA1
