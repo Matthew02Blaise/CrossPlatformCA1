@@ -3,3 +3,6 @@ https://play.google.com/apps/testing/com.Matthew02Blaise.SpaceSoldier
 
 GitHub for code:
 https://github.com/Matthew02Blaise/CrossPlatformCA1
+
+Screencast:
+https://youtu.be/cR7crn2b0R0
